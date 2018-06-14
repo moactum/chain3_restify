@@ -1,0 +1,25 @@
+{% extends "base.html" %} 
+
+{% block main %}
+<div class="grid-x grid-margin-x overflow-scroll">
+	<div class="cell overflow-scroll">
+                <h3><span class="glyphicon glyphicon-user"></span> api query result</h3>
+				<table class="radius bordered shadow overflow-scroll">
+				{% for k, v in data %}
+					<tr>
+						<td>{{ k }}</td>
+						<td>
+							{% if v.__proto__ === ({}).__proto__ %}
+								<PRE>{{ v | dump(2) }}</PRE>
+							{% elif v.__proto__ === [].__proto__ %}
+								<PRE>{{ v | dump(2) }}</PRE>
+							{% else %}
+								{{ v }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+				</table>
+    </div>
+</div>
+{% endblock %}

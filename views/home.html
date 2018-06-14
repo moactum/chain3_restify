@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+										{% block main_block %}
+										<script> var ws = new WebSocket(location.protocol.replace('http','ws') + '//' + location.host + '/ws/moac'); </script>
+										{% raw %}
+										<div id="scrollbar2" class="card-section height-75" style="height:70%;overflow-x:hidden; overflow-y:scroll;">
+											<div v-for="msg in messages">
+												<p><span><a :href="'/api/block/' + msg.number">Block {{ msg.number }}</a></span>&nbsp;&nbsp;{{ msg.timestamp }}&nbsp;&nbsp;{{ msg.transactions.length }} txns</p>
+											<p class="">{{ msg.hash }}</p>
+											
+											<p>Mined By <a :href="'/api/address/' + msg.miner" class='address-tag'>{{ msg.miner }}</a></p>
+											<hr>
+											</div>
+										</div>
+										{% endraw %}
+										{% endblock %}
+
+										{% block main_tx %}
+										{% raw %}
+										<div id="scrollbar" class="card-section height-75" style="height:70%;overflow-x:hidden; overflow-y:scroll;">
+											<div v-for="tx in txs">
+												<p><a :href="'/api/tx/' + tx.hash" title="Transaction Hash">{{ tx.hash }}</a></p>
+												<p>From <a :href="'/api/address/' + tx.from">{{ tx.from | truncate }}</a> To <a :href="'/api/address/' + tx.to">{{ tx.to | truncate }}</a></p>
+												<p>Amount {{ tx.value / 1e18 }} MOAC</p>
+												<hr>
+											</div>
+										</div>
+										{% endraw %}
+										{% endblock %}
+		{% block vuejs %}
+		<script type="text/javascript" src="/static/js/vue.min.js"></script>
+		<script type="text/javascript" src="/static/js/vue2-filters.min.js"></script>
+		<script type="text/javascript" src="/static/js/homevue.js"></script>
+		{% endblock %}
