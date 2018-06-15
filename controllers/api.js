@@ -69,23 +69,32 @@ module.exports = {
 		ctx.rest({info: 'index not ready yet, use the search please'});
 	},
 	'GET /api/search/:hash': async (ctx, next) => {
-		var data = chain3.mc.getBlock(ctx.params.hash, true);
-		if (!data) {
-			console.log("try tx")
-			data = chain3.mc.getTransaction(ctx.params.hash);
+		var data;
+		if ( chain3.isAddress(ctx.params.hash) ) {
+			//handle wallet
+			data = chain3.fromSha(chain3.mc.getBalance(ctx.params.hash));
 			if (!data) {
-				console.log("try wallet")
-				data = chain3.fromSha(chain3.mc.getBalance(ctx.params.hash));
+				throw new APIError('invalid_data', 'not found');
+			} else {
+				ctx.rest({balance_moac: data});
+			}
+		} else {
+			if ( ctx.params.hash.length < 40 ) {
+				// handle block by block number
+				data = chain3.mc.getBlock(ctx.params.hash, true);
+			} else {
+				// handle transaction try by hash
+				data = chain3.mc.getTransaction(ctx.params.hash);
 				if (!data) {
-					throw new APIError('invalid_data', 'not found');
-				} else {
-					ctx.rest({balance_moac: data});
+					//handle  block by hash
+					data = chain3.mc.getBlock(ctx.params.hash, true);
 				}
+			}
+			if (!data) {
+				throw new APIError('invalid_data', 'not found');
 			} else {
 				ctx.rest(data);
 			}
-		} else {
-			ctx.rest(data);
 		}
 	}
 }
