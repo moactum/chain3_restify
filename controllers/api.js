@@ -55,8 +55,9 @@ module.exports = {
 		var data = chain3.fromSha(chain3.mc.getBalance(ctx.params.address));
 		if (!data) {
 			throw new APIError('invalid_data', 'not found');
+		} else {
+			ctx.rest({balance_moac: data, count_transaction: chain3.mc.getTransactionCount(ctx.params.address)});
 		}
-		ctx.rest({balance_moac: data});
 	},
 	'GET /api/address/:address/code': async (ctx, next) => {
 		var data = chain3.mc.getCode(ctx.params.address);
