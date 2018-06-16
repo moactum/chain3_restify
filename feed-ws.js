@@ -1,5 +1,5 @@
 var config = require('./config');
-var PORT = process.env.PORT || config.port || 3003
+var PORT = process.env.PORT || config.port || 3000
 var metrics = {};
 var blockNumber = 0, block, block_hash = '';
 const axios = require('axios');
