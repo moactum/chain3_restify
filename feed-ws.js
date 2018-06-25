@@ -13,6 +13,7 @@ chain3.setProvider(new chain3.providers.HttpProvider(config.chain3_provider || '
 blockNumber = chain3.mc.blockNumber;
 while ( ! block ) {
 	block = chain3.mc.getBlock(blockNumber);
+	delete(block.logsBloom)
 }
 metrics.block = block;
 //console.log(chain3.mc.syncing);
@@ -38,6 +39,7 @@ function getNextBlock() {
 	console.log(blockNumber + 1);
 	metrics = {};
 	if (block) {
+		delete(block.logsBloom)
 		block2 = chain3.mc.getBlock(blockNumber - 9);
 		blockNumber += 1;
 		metrics.block = block;
