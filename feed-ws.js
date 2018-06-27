@@ -46,7 +46,7 @@ function getNextBlock() {
 
 		metrics.info_moac = {
 			block_current: blockNumber,
-			block_timedelta: block.timestamp - block2.timestamp ,
+			hashrate: (block.totalDifficulty - block2.totalDifficulty) / (block.timestamp - block2.timestamp) ,
 			block_difficulty: block.difficulty,
 			version_api: chain3.version.api,
 			version_moac: chain3.version.moac,

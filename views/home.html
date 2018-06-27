@@ -1,4 +1,52 @@
 {% extends "base.html" %}
+				{% block stats %}
+				<div class="large-12 cell">
+					{% raw %}
+						<div id="jsonstat" class="grid-x grid-margin-x small-up-2 medium-up-4 large-up-4">
+							<div class="cell">
+								<div class="card">
+									<div class="card-divider align-center">
+										<h5>Network-Moac</h5>
+									</div>
+									<div class="card-section">
+										<div><h5 class="font-bold text-center">{{ info_moac[0].version_network }} &nbsp; {{ info_moac[0].version_moac }}</h5></div>
+									</div>
+								</div>
+							</div>
+							<div class="cell">
+								<div class="card">
+									<div class="card-divider align-center">
+										<h5>Height</h5>
+									</div>
+									<div class="card-section">
+										<div><h5 class="font-bold text-center">{{ info_moac[0].block_current }} &nbsp;</h5></div>
+									</div>
+								</div>
+							</div>
+							<div class="cell">
+								<div class="card">
+									<div class="card-divider align-center">
+										<h5>Difficulty</h5>
+									</div>
+									<div class="card-section">
+										<div><h5 class="font-bold text-center">{{ info_moac[0].block_difficulty / 1e12 }} T</h5></div>
+									</div>
+								</div>
+							</div>
+							<div class="cell">
+								<div class="card">
+									<div class="card-divider align-center">
+										<h5>Hashrate</h5>
+									</div>
+									<div class="card-section">
+										<div><h5 class="font-bold text-center">{{ info_moac[0].hashrate / 1e12 }} T</h5></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endraw %}
+				</div>
+				{% endblock %}
 
 										{% block main_block %}
 										<script> var ws = new WebSocket(location.protocol.replace('http','ws') + '//' + location.host + '/ws/moac'); </script>
