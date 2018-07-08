@@ -133,6 +133,7 @@ module.exports = {
 			throw new APIError('non_erc20', 'not erc20 token');
 		}
 		jsonrpc_options.params[0].address = ctx.params.address;
+		jsonrpc_options.params[0].fromBlock = chain3.mc.blockNumber - 600;
 		jsonrpc_options.id = chain3.toDecimal(ctx.params.address)
 		try {
 			//logs = await get_logs(events);
