@@ -2,6 +2,8 @@ var config = require('../config');
 
 const abi = require('../abi')
 
+const axios = require('axios');
+
 const sleep = require('sleep');
 
 const Chain3 = require('chain3');
@@ -24,6 +26,20 @@ async function get_logs(events) {
 		});
 	});
 }
+
+jsonrpc_options = {
+	jsonrpc: "2.0",
+	id: 1,
+	method: "eth_getLogs",
+	params: [
+		{
+			fromBlock: "earliest",
+			toBLock: "latest",
+			// event: Transfer
+			// topics: [ '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',null,null]
+		}
+	]
+};
 module.exports = {
 	'GET /api/block': async (ctx, next) => {
 		ctx.rest({info: 'index not ready yet, use the search please'});
@@ -73,6 +89,14 @@ module.exports = {
 			ctx.rest({balance_moac: data, count_transaction: chain3.mc.getTransactionCount(ctx.params.address)});
 		}
 	},
+	'GET /api/address/:address/balance': async (ctx, next) => {
+		var data = chain3.fromSha(chain3.mc.getBalance(ctx.params.address));
+		if (!data) {
+			throw new APIError('invalid_data', 'not found');
+		} else {
+			ctx.rest({balance_moac: data, count_transaction: chain3.mc.getTransactionCount(ctx.params.address)});
+		}
+	},
 	'GET /api/address/:address/code': async (ctx, next) => {
 		var data = chain3.mc.getCode(ctx.params.address);
 		if (!data) {
@@ -83,7 +107,7 @@ module.exports = {
 	'GET /api/token': async (ctx, next) => {
 		ctx.rest({info: 'index not ready yet, use the search please'});
 	},
-	'GET /api/token/:address': async (ctx, next) => {
+	'GET /api/address/:address/token': async (ctx, next) => {
 		var token_protocol = '';
 		try {
 			var contract = CONTRACT_ERC20_STANDARD.at(ctx.params.address);
@@ -97,21 +121,27 @@ module.exports = {
 			ctx.rest({protocol: token_protocol, name: contract.name(), symbol: contract.symbol(), decimals: contract.decimals(), totalSupply: contract.totalSupply()});
 		}
 	},
-	'GET /api/token/:address/logs': async (ctx, next) => {
-		var logs = []
+	'GET /api/address/:address/logs': async (ctx, next) => {
+		var logs = [];
 		var token_protocol = '';
 		try {
-			var contract = CONTRACT_ERC20_MINIMAL.at(ctx.params.address);
+			var contract = CONTRACT_ERC20_STANDARD.at(ctx.params.address);
 			var events = contract.allEvents({fromBlock: 0, toBlock: chain3.mc.blockNumber - 1});
 			token_protocol = 'erc20';
 		} catch (err) {
 			console.log('non_erc20', 'not erc20 token');
-		}
-		if (!token_protocol) {
 			throw new APIError('non_erc20', 'not erc20 token');
 		}
-		console.log("executing await");
-		logs = await get_logs(events);
+		jsonrpc_options.params[0].address = ctx.params.address;
+		jsonrpc_options.id = chain3.toDecimal(ctx.params.address)
+		try {
+			//logs = await get_logs(events);
+			response = await axios.post(config.chain3_provider || 'http://127.0.0.1:8545', jsonrpc_options);
+			logs = response.data.result
+		} catch (error) {
+			console.log(error);
+			throw new APIError('logs_erc20', 'not retrieved');
+		}
 		ctx.rest(logs)
 	},
 	'GET /api/search': async (ctx, next) => {
