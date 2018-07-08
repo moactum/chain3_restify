@@ -78,7 +78,7 @@ module.exports = {
 	'GET /api/token/:address': async (ctx, next) => {
 		var token_protocol = '';
 		try {
-			var contract = CONTRACT_ERC20_MINIMAL.at(ctx.params.address);
+			var contract = CONTRACT_ERC20_STANDARD.at(ctx.params.address);
 			token_protocol = 'erc20';
 		} catch (err) {
 			console.log('non_erc20', 'not erc20 token');
