@@ -16,6 +16,14 @@ const CONTRACT_ERC20_STANDARD = chain3.mc.contract(abi.ABI_ERC20_STANDARD);
 
 const APIError = require('../rest').APIError;
 
+async function get_logs(events) {
+	return new Promise((resolve, reject) => {
+		events.get(function(error,result) {
+			if (!error) { resolve(result); console.log("good"); }
+			else { console.log("ooooh"); reject(error); }
+		});
+	});
+}
 module.exports = {
 	'GET /api/block': async (ctx, next) => {
 		ctx.rest({info: 'index not ready yet, use the search please'});
@@ -88,6 +96,23 @@ module.exports = {
 		} else {
 			ctx.rest({protocol: token_protocol, name: contract.name(), symbol: contract.symbol(), decimals: contract.decimals(), totalSupply: contract.totalSupply()});
 		}
+	},
+	'GET /api/token/:address/logs': async (ctx, next) => {
+		var logs = []
+		var token_protocol = '';
+		try {
+			var contract = CONTRACT_ERC20_MINIMAL.at(ctx.params.address);
+			var events = contract.allEvents({fromBlock: 0, toBlock: chain3.mc.blockNumber - 1});
+			token_protocol = 'erc20';
+		} catch (err) {
+			console.log('non_erc20', 'not erc20 token');
+		}
+		if (!token_protocol) {
+			throw new APIError('non_erc20', 'not erc20 token');
+		}
+		console.log("executing await");
+		logs = await get_logs(events);
+		ctx.rest(logs)
 	},
 	'GET /api/search': async (ctx, next) => {
 		ctx.rest({info: 'index not ready yet, use the search please'});
