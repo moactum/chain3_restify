@@ -7,7 +7,7 @@ module.exports = {
         pathPrefix = pathPrefix || '/api/';
         return async (ctx, next) => {
             if (ctx.request.path.startsWith(pathPrefix)) {
-                console.log(`Process API ${ctx.request.method} ${ctx.request.url}...`);
+                //console.log(`Process API ${ctx.request.method} ${ctx.request.url}...`);
 				if (!/json/i.test(ctx.request.headers.accept) && /html/i.test(ctx.request.headers.accept)) {
                 	ctx.rest = (data) => {
 						//ctx.render('api.html', {data: data});
