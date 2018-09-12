@@ -143,7 +143,7 @@ function onConnect() {
 	//});
 	let connections = this.wss.clients.size
 	this.wss.broadcast(createMessage('serverinfo', {sockconn: connections}));
-	console.log(`...there are ${connections} clients`)
+	console.log(`[app-ws]...there are ${connections} clients`)
 }
 
 function onMessage(message) {
@@ -151,14 +151,14 @@ function onMessage(message) {
 	if (message && message.trim()) {
 		let msg = createMessage('datafeed', JSON.parse(message));
 		this.wss.broadcast(msg);
-		console.log(`there are  ${this.wss.clients.size} clients ...`);
+		console.log(`[app-ws]there are  ${this.wss.clients.size} clients ...`);
 	}
 }
 
 function onClose() {
 	let connections = this.wss.clients.size
 	//this.wss.broadcast(createMessage('serverinfo', {sockconn: connections}));
-	console.log(`...there are ${connections} clients`)
+	console.log(`[app-ws]...there are ${connections} clients`)
 }
 
 app.wss = createWebSocketServer(server, onConnect, onMessage, onClose);

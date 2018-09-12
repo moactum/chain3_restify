@@ -18,7 +18,7 @@ const CONTRACT_ERC20_STANDARD = chain3.mc.contract(abi.ABI_ERC20_STANDARD);
 
 const APIError = require('../rest').APIError;
 
-jsonrpc_options = {
+var jsonrpc_options = {
 	jsonrpc: "2.0",
 	id: 1,
 	method: "eth_getLogs",
